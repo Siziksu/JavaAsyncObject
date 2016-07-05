@@ -9,98 +9,109 @@ import java.util.concurrent.Executors;
 
 public class Main {
 
-  public static void main(String args[]) {
-    new Main().start();
-  }
+    public static void main(String args[]) {
+        new Main().start();
+    }
 
-  public void start() {
-    System.out.println("-> START METHOD");
+    private void start() {
+        System.out.println("-> START METHOD");
 
-    AsyncObject<UserMock> asyncObject = new AsyncObject<UserMock>(new AsyncObject.Request<UserMock>() {
+        new AsyncObject<UserMock>()
+                .action(new AsyncObject.Action<UserMock>() {
+                    @Override
+                    public UserMock action() throws Exception {
+                        System.out.println("request 1 started in [" + Thread.currentThread().getName() + "] (2 seconds delay response)");
+                        Mock.getInstance().pause(2000);
+                        return Mock.getInstance().fakeErrorCall1();
+                    }
 
-      @Override
-      public UserMock request() throws Exception {
-        System.out.println("request 1 started  [" + Thread.currentThread().getName() + "]");
-        Mock.getInstance().pause(2000);
-        return Mock.getInstance().fakeErrorCall1();
-      }
+                    @Override
+                    public void done() {
+                        System.out.println("request 1 done");
+                    }
+                })
+                .execute();
 
-      @Override
-      public void onSuccess(long id, UserMock response) {
-        System.out.println("request 1 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"}  [" + Thread.currentThread().getName() + "]");
-      }
+        new AsyncObject<UserMock>()
+                .action(new AsyncObject.Action<UserMock>() {
+                    @Override
+                    public UserMock action() throws Exception {
+                        System.out.println("request 2 started in [" + Thread.currentThread().getName() + "] (4 seconds delay response)");
+                        Mock.getInstance().pause(4000);
+                        return Mock.getInstance().fakeCall2();
+                    }
 
-      @Override
-      public void onError(long id, Exception e) {
-        System.out.println("request 1 error  [" + Thread.currentThread().getName() + "]");
-      }
-    });
-    asyncObject.execute();
+                    @Override
+                    public void done() {
+                        System.out.println("request 2 done");
+                    }
+                })
+                .success(new AsyncObject.Success<UserMock>() {
 
-    new AsyncObject<UserMock>(new AsyncObject.Request<UserMock>() {
+                    @Override
+                    public void success(UserMock response) {
+                        System.out.println("request 2 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"}  [" + Thread.currentThread().getName() + "]");
+                    }
+                })
+                .error(new AsyncObject.Error() {
 
-      @Override
-      public UserMock request() throws Exception {
-        System.out.println("request 2 started  [" + Thread.currentThread().getName() + "]");
-        Mock.getInstance().pause(4000);
-        return Mock.getInstance().fakeCall2();
-      }
+                    @Override
+                    public void error(Exception e) {
+                        System.out.println("request 2 error  [" + Thread.currentThread().getName() + "]");
+                    }
+                })
+                .execute();
 
-      @Override
-      public void onSuccess(long id, UserMock response) {
-        System.out.println("request 2 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"}  [" + Thread.currentThread().getName() + "]");
-      }
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-      @Override
-      public void onError(long id, Exception e) {
-        System.out.println("request 2 error  [" + Thread.currentThread().getName() + "]");
-      }
-    }).execute();
+        new AsyncObject<UserMock>()
+                .action(new AsyncObject.Action<UserMock>() {
+                    @Override
+                    public UserMock action() throws Exception {
+                        System.out.println("request 3 started in [" + Thread.currentThread().getName() + "] (3 seconds delay response)");
+                        Mock.getInstance().pause(3000);
+                        return Mock.getInstance().fakeCall3();
+                    }
 
-    ExecutorService executorService = Executors.newFixedThreadPool(2);
+                    @Override
+                    public void done() {
+                        System.out.println("request 3 done");
+                    }
+                })
+                .success(new AsyncObject.Success<UserMock>() {
 
-    new AsyncObject<UserMock>(new AsyncObject.Request<UserMock>() {
+                    @Override
+                    public void success(UserMock response) {
+                        System.out.println("request 3 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"}  [" + Thread.currentThread().getName() + "]");
+                    }
+                })
+                .error(new AsyncObject.Error() {
 
-      @Override
-      public UserMock request() throws Exception {
-        System.out.println("request 3 started  [" + Thread.currentThread().getName() + "]");
-        Mock.getInstance().pause(3000);
-        return Mock.getInstance().fakeCall3();
-      }
+                    @Override
+                    public void error(Exception e) {
+                        System.out.println("request 3 error  [" + Thread.currentThread().getName() + "]");
+                    }
+                })
+                .execute(executorService);
 
-      @Override
-      public void onSuccess(long id, UserMock response) {
-        System.out.println("request 3 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"}  [" + Thread.currentThread().getName() + "]");
-      }
+        new AsyncObject<Void>()
+                .action(new AsyncObject.Action<Void>() {
+                    @Override
+                    public Void action() throws Exception {
+                        System.out.println("request 4 started in [" + Thread.currentThread().getName() + "] (5 seconds delay response)");
+                        Mock.getInstance().pause(5000);
+                        return null;
+                    }
 
-      @Override
-      public void onError(long id, Exception e) {
-        System.out.println("request 3 error  [" + Thread.currentThread().getName() + "]");
-      }
-    }).execute(executorService);
+                    @Override
+                    public void done() {
+                        System.out.println("request 4 done");
+                    }
+                })
+                .execute(executorService);
 
-    new AsyncObject<Void>(new AsyncObject.Request<Void>() {
+        AsyncObject.shutdown(executorService);
 
-      @Override
-      public Void request() throws Exception {
-        System.out.println("request void started  [" + Thread.currentThread().getName() + "]");
-        Mock.getInstance().pause(5000);
-        return null;
-      }
-
-      @Override
-      public void onSuccess(long id, Void response) {
-        System.out.println("request void response  [" + Thread.currentThread().getName() + "]");
-      }
-
-      @Override
-      public void onError(long id, Exception e) {
-        System.out.println("request void error  [" + Thread.currentThread().getName() + "]");
-      }
-    }).execute(executorService);
-
-    AsyncObject.shutdown(executorService);
-
-    System.out.println("-> END METHOD");
-  }
+        System.out.println("-> END METHOD");
+    }
 }
