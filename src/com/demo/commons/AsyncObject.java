@@ -2,7 +2,6 @@ package com.demo.commons;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Object used to easily create async calls.
@@ -102,28 +101,24 @@ public final class AsyncObject<O> {
      */
     private Runnable obtainRunnable() {
         if (runnable == null) {
-            runnable = new Runnable() {
-
-                @Override
-                public void run() {
-                    executing = true;
-                    try {
-                        O response = action.action();
-                        if (success != null) {
-                            onSuccess(response);
-                        } else {
-                            System.out.println("Action successfully completed");
-                        }
-                    } catch (Exception e) {
-                        if (error != null) {
-                            onError(e);
-                        } else {
-                            System.out.println(e.toString());
-                        }
+            runnable = () -> {
+                executing = true;
+                try {
+                    O response = action.action();
+                    if (success != null) {
+                        onSuccess(response);
+                    } else {
+                        System.out.println("Action successfully completed");
                     }
-                    executing = false;
-                    onDone();
+                } catch (Exception e) {
+                    if (error != null) {
+                        onError(e);
+                    } else {
+                        System.out.println(e.toString());
+                    }
                 }
+                executing = false;
+                onDone();
             };
         }
         return runnable;

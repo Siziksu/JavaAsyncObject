@@ -95,7 +95,7 @@ The details for each requests are:
 3. Uses the full object and has 3 seconds delay and it's executed in a `ThreadPool`.
 4. It just uses the `Action` task, has 5 seconds delay and it's executed in the same `ThreadPool` as the third request.
 
-The result will be something like this (the `-> END METHOD` line can be shown in another position because of the async nature of the threads):
+The result will be something like this (notice that the `-> END METHOD` line can be shown in another position because of the async nature of the threads):
 
 ```
 -> START METHOD
@@ -106,9 +106,9 @@ request 4 started in [pool-1-thread-2] (5 seconds delay response)
 -> END METHOD
 java.lang.Exception: Fake error
 request 1 done
-request 3 response: {user_id="15", user_name="Thelma"}  [pool-1-thread-1]
+request 3 response: {user_id="15", user_name="Thelma"} in [pool-1-thread-1]
 request 3 done
-request 2 response: {user_id="31", user_name="Marcus"}  [Thread-1]
+request 2 response: {user_id="31", user_name="Marcus"} in [Thread-1]
 request 2 done
 Action successfully completed
 request 4 done

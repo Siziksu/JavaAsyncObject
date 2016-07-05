@@ -50,14 +50,14 @@ public class Main {
 
                     @Override
                     public void success(UserMock response) {
-                        System.out.println("request 2 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"}  [" + Thread.currentThread().getName() + "]");
+                        System.out.println("request 2 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]");
                     }
                 })
                 .error(new AsyncObject.Error() {
 
                     @Override
                     public void error(Exception e) {
-                        System.out.println("request 2 error  [" + Thread.currentThread().getName() + "]");
+                        System.out.println("request 2 error in [" + Thread.currentThread().getName() + "]");
                     }
                 })
                 .execute();
@@ -82,14 +82,14 @@ public class Main {
 
                     @Override
                     public void success(UserMock response) {
-                        System.out.println("request 3 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"}  [" + Thread.currentThread().getName() + "]");
+                        System.out.println("request 3 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]");
                     }
                 })
                 .error(new AsyncObject.Error() {
 
                     @Override
                     public void error(Exception e) {
-                        System.out.println("request 3 error  [" + Thread.currentThread().getName() + "]");
+                        System.out.println("request 3 error in [" + Thread.currentThread().getName() + "]");
                     }
                 })
                 .execute(executorService);
