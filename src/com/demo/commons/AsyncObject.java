@@ -131,7 +131,9 @@ public final class AsyncObject<O> {
                     }
                 }
                 executing = false;
-                onDone();
+                if (done != null) {
+                    onDone();
+                }
             };
         }
         return runnable;

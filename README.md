@@ -8,12 +8,23 @@ Developed using the [JetBrains IntelliJ IDEA] (https://www.jetbrains.com/idea/) 
 
 This object can run actions in background using threads. Can also be executed with an Executor (ThreadPoolExecutor, ExecutorService). It uses 4 tasks (Functional Interfaces):
   
-1. Action
-2. Success
-3. Error
-4. Done
+1. Action (required)
+2. Success (optional)
+3. Error (optional)
+4. Done (optional)
 
-Example:
+This object will run the `action()` method in a new thread. Once the `Action` is finished, it will give feedback through the `done()` method. If we want to get track of the response we will use the `Success` method. And if we want to get track of the possible errors with the `Action` we will use the `Error` method. Except the `Action` method, all are optional.
+
+Examples:
+
+```java
+new AsyncObject<Void>()
+                .action(() -> {
+                    System.out.println("AsyncObject");
+                    return null;
+                })
+                .execute();
+```
 
 ```java
 new AsyncObject<String>()
@@ -23,8 +34,6 @@ new AsyncObject<String>()
                 .error(e -> System.out.println("request error: " + e.toString()))
                 .execute();
 ```
-
-This object will run the `action()` method in a new thread. Once the `Action` is finished, it will give feedback through the `done()` method. If we want to get track of the response we will use the `Success` method. And if we want to get track of the possible errors with the `Action` we will use the `Error` task like this:
 
 ## The example
 
