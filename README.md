@@ -1,88 +1,30 @@
 # JavaAsyncObject
+
 AsyncObject for Java with an usage demonstration.
 
 Developed using the [JetBrains IntelliJ IDEA] (https://www.jetbrains.com/idea/) IDE.
 
 ## How it works this object
 
-This object can run actions in background using threads. Can also be executed with an Executor (ThreadPoolExecutor, ExecutorService). It uses 3 tasks (interfaces):
+This object can run actions in background using threads. Can also be executed with an Executor (ThreadPoolExecutor, ExecutorService). It uses 4 tasks (Functional Interfaces):
   
 1. Action
 2. Success
 3. Error
+4. Done
 
-The simplest way to call this object is:
-
-```java
-new AsyncObject<String>()
-    .action(new AsyncObject.Action<String>() {
-    
-        @Override
-        public String action() throws Exception {
-            return "AsyncObject";
-        }
-    
-        @Override
-        public void done() {
-            System.out.println("Action done");
-        }
-    })
-    .execute();
-```
-
-This object will run the `action()` method in a new thread. Once the `Action` is finished, it will give feedback through the `done()` method.
-
-If we want to get track of the response we will use the `Success` task like this:
+Example:
 
 ```java
 new AsyncObject<String>()
-    .action(new AsyncObject.Action<String>() {
-    
-        @Override
-        public String action() throws Exception {
-            return "AsyncObject";
-        }
-    
-        @Override
-        public void done() {
-            System.out.println("Action done");
-        }
-    })
-    .success(new AsyncObject.Success<String>() {
-    
-        @Override
-        public void success(String response) {
-            System.out.println(response);
-        }
-    })
-    .execute();
+                .action(() -> "AsyncObject")
+                .success(System.out::println)
+                .done(() -> System.out.println("request done"))
+                .error(e -> System.out.println("request error: " + e.toString()))
+                .execute();
 ```
 
-And if we want to get track of the possible errors with the `Action` we will use the `Error` task like this:
-
-```java
-new AsyncObject<String>()
-    .action(new AsyncObject.Action<String>() {
-    
-        @Override
-        public String action() throws Exception {
-            return "AsyncObject";
-        }
-    
-        @Override
-        public void done() {
-            System.out.println("Action done");
-        }
-    })
-    .error(new AsyncObject.Error() {
-    
-        @Override
-        public void error(Exception e) {
-            System.out.println(e.toString());
-        }
-    })
-    .execute();
-```
+This object will run the `action()` method in a new thread. Once the `Action` is finished, it will give feedback through the `done()` method. If we want to get track of the response we will use the `Success` method. And if we want to get track of the possible errors with the `Action` we will use the `Error` task like this:
 
 ## The example
 
