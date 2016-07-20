@@ -23,7 +23,7 @@ new AsyncObject<Void>()
                     System.out.println("AsyncObject");
                     return null;
                 })
-                .execute();
+                .run();
 ```
 
 ```java
@@ -32,7 +32,18 @@ new AsyncObject<String>()
                 .success(System.out::println)
                 .done(() -> System.out.println("request done"))
                 .error(e -> System.out.println("request error: " + e.toString()))
-                .execute();
+                .run();
+```
+
+```java
+new AsyncObject<String>()
+                .action(() -> "AsyncObject")
+                .subscribe(
+                        System.out::println,
+                        e -> System.out.println("request error: " + e.toString()),
+                        () -> System.out.println("request done")
+                )
+                .run();
 ```
 
 ## The example
