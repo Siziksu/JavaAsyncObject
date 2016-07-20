@@ -1,11 +1,11 @@
-package com.demo.mock;
+package com.demo.common.model;
 
-public class UserMock {
+public class User {
 
   public long id;
   public String name;
 
-  public UserMock(int id, String name) {
+  public User(int id, String name) {
     this.id = id;
     this.name = name;
   }

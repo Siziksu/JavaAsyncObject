@@ -1,4 +1,9 @@
-package com.demo.commons;
+package com.demo.common;
+
+import com.demo.common.functions.Action;
+import com.demo.common.functions.Done;
+import com.demo.common.functions.Error;
+import com.demo.common.functions.Success;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -35,7 +40,7 @@ public final class AsyncObject<O> {
 
     /**
      * Sets the {@link Action} used to create the {@link Runnable} that will
-     * be executed in a new {@link Thread} when the method {@link #execute()}
+     * be executed in a new {@link Thread} when the method {@link #run()}
      * is called.
      *
      * @param action the Request that will be used
@@ -43,18 +48,6 @@ public final class AsyncObject<O> {
      */
     public AsyncObject<O> action(final Action<O> action) {
         this.action = action;
-        return this;
-    }
-
-    /**
-     * Sets the {@link Done} used to emit when the response of the
-     * {@link Action} if ends.
-     *
-     * @param done the Done that will be used
-     * @return {@code AsyncObject}
-     */
-    public AsyncObject<O> done(final Done done) {
-        this.done = done;
         return this;
     }
 
@@ -83,9 +76,89 @@ public final class AsyncObject<O> {
     }
 
     /**
+     * Sets the {@link Done} used to emit when the response of the
+     * {@link Action} if ends.
+     *
+     * @param done the Done that will be used
+     * @return {@code AsyncObject}
+     */
+    public AsyncObject<O> done(final Done done) {
+        this.done = done;
+        return this;
+    }
+
+    /**
+     * Sets the {@link Success} used to return the response of the
+     * {@link Action} if ends successfully.
+     *
+     * @param success the Success that will be used
+     * @return {@code AsyncObject}
+     */
+    public AsyncObject<O> subscribe(final Success<O> success) {
+        this.success = success;
+        return this;
+    }
+
+    /**
+     * Sets the {@link Success} used to return the response of the
+     * {@link Action} if ends successfully.
+     * <br />
+     * Sets the {@link Done} used to emit when the response of the
+     * {@link Action} if ends.
+     *
+     * @param success the Success that will be used
+     * @param done    the Done that will be used
+     * @return {@code AsyncObject}
+     */
+    public AsyncObject<O> subscribe(final Success<O> success, final Done done) {
+        this.success = success;
+        this.done = done;
+        return this;
+    }
+
+    /**
+     * Sets the {@link Success} used to return the response of the
+     * {@link Action} if ends successfully.
+     * <br />
+     * Sets the {@link Error} used to return {@link Exception} that will be
+     * thrown if the {@link Action} fails.
+     *
+     * @param success the Success that will be used
+     * @param error   the Error that will be used
+     * @return {@code AsyncObject}
+     */
+    public AsyncObject<O> subscribe(final Success<O> success, final Error error) {
+        this.success = success;
+        this.error = error;
+        return this;
+    }
+
+    /**
+     * Sets the {@link Success} used to return the response of the
+     * {@link Action} if ends successfully.
+     * <br />
+     * Sets the {@link Error} used to return {@link Exception} that will be
+     * thrown if the {@link Action} fails.
+     * <br />
+     * Sets the {@link Done} used to emit when the response of the
+     * {@link Action} if ends.
+     *
+     * @param success the Success that will be used
+     * @param error   the Error that will be used
+     * @param done    the Done that will be used
+     * @return {@code AsyncObject}
+     */
+    public AsyncObject<O> subscribe(final Success<O> success, final Error error, final Done done) {
+        this.success = success;
+        this.error = error;
+        this.done = done;
+        return this;
+    }
+
+    /**
      * Executes the {@link Action} into a new {@link Thread}.
      */
-    public void execute() {
+    public void run() {
         if (action != null) {
             new Thread(obtainRunnable()).start();
         } else {
@@ -94,9 +167,9 @@ public final class AsyncObject<O> {
     }
 
     /**
-     * Executes the {@link AsyncObject.Action} into a {@link Executor}.
+     * Executes the {@link Action} into a {@link Executor}.
      */
-    public void execute(Executor executor) {
+    public void run(Executor executor) {
         executor.execute(obtainRunnable());
     }
 
@@ -149,60 +222,5 @@ public final class AsyncObject<O> {
 
     private void onDone() {
         done.done();
-    }
-
-    /**
-     * A task that returns a result and may throw an exception.
-     * <br>It is designed ot be executed by another thread.
-     * <br>It returns the result of the async request through: {@code action(O)}.
-     *
-     * @param <O> the result type of method {@code request}
-     */
-    public interface Action<O> {
-
-        /**
-         * Computes a result, or throws an exception if unable to do so.
-         *
-         * @return computed result
-         * @throws Exception if unable to compute a result
-         */
-        O action() throws Exception;
-    }
-
-    /**
-     * Task that emits when an action is done.
-     */
-    public interface Done {
-
-        /**
-         * Emits when the action is done.
-         */
-        void done();
-    }
-
-    /**
-     * This task returns a response.
-     */
-    public interface Success<O> {
-
-        /**
-         * This method will be executed if the action ends successfully.
-         *
-         * @param response the response of the action
-         */
-        void success(O response);
-    }
-
-    /**
-     * This task returns an {@link Exception}.
-     */
-    public interface Error {
-
-        /**
-         * This method will be executed if the action fails.
-         *
-         * @param e the exception returned
-         */
-        void error(Exception e);
     }
 }
