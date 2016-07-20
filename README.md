@@ -52,10 +52,12 @@ In this example, we will use 4 different `AsyncObjects`, each one with a differe
 
 The details for each requests are:
 
-1. It just uses the `Action` task, has 2 seconds delay and returns an error. 
-2. Uses the full object (`Action`, `Success`, `Error`) and has 4 seconds delay.
-3. Uses the full object and has 3 seconds delay and it's executed in a `ThreadPool`.
-4. It just uses the `Action` task, has 5 seconds delay and it's executed in the same `ThreadPool` as the third request.
+1. It just uses the `Action` function, has 2 seconds delay and returns an error. 
+2. Uses the `Action`, `Success`, `Error`, `Done` functions and has 4 seconds delay.
+3. Uses the `Action`, `Success`, `Error`, `Done` functions, has 3 seconds delay and it's executed in a `ThreadPool`.
+4. It just uses the `Action` function, has 5 seconds delay and it's executed in the same `ThreadPool` as the third request.
+5. It just uses the `Action` function, the `subscribe` method (`Action`, `Error`), has 7 seconds delay and returns an error.
+6. It just uses the `Action` function, the `subscribe` method (`Action`, `Success`, `Error`) and has 6 seconds delay.
 
 The result will be something like this (notice that the `-> END METHOD` line can be shown in another position because of the async nature of the threads):
 
@@ -65,7 +67,9 @@ request 1 started in [Thread-0] (2 seconds delay response)
 request 2 started in [Thread-1] (4 seconds delay response)
 request 3 started in [pool-1-thread-1] (3 seconds delay response)
 request 4 started in [pool-1-thread-2] (5 seconds delay response)
+request 5 started in [Thread-2] (4 seconds delay response)
 -> END METHOD
+request 6 started in [Thread-3] (4 seconds delay response)
 java.lang.Exception: Fake error
 request 1 done
 request 3 response: {user_id="15", user_name="Thelma"} in [pool-1-thread-1]
@@ -74,6 +78,9 @@ request 2 response: {user_id="31", user_name="Marcus"} in [Thread-1]
 request 2 done
 Action successfully completed
 request 4 done
+request 6 response: {user_id="54", user_name="Frank"} in [Thread-3]
+request 6 done
+request 5 error in [Thread-2]
 ```
 
 ## License
