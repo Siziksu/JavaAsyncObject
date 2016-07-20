@@ -27,9 +27,9 @@ public class Sample {
                     Mock.getInstance().pause(4000);
                     return Mock.getInstance().fakeCall2();
                 })
-                .done(() -> System.out.println("request 2 done"))
                 .success(response -> System.out.println("request 2 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]"))
                 .error(e -> System.out.println("request 2 error in [" + Thread.currentThread().getName() + "]"))
+                .done(() -> System.out.println("request 2 done"))
                 .run();
 
         ExecutorService executorService = Executors.newFixedThreadPool(2);
@@ -40,9 +40,9 @@ public class Sample {
                     Mock.getInstance().pause(3000);
                     return Mock.getInstance().fakeCall3();
                 })
-                .done(() -> System.out.println("request 3 done"))
                 .success(response -> System.out.println("request 3 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]"))
                 .error(e -> System.out.println("request 3 error in [" + Thread.currentThread().getName() + "]"))
+                .done(() -> System.out.println("request 3 done"))
                 .run(executorService);
 
         new AsyncObject<Void>()
