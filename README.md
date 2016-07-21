@@ -15,7 +15,7 @@ This object can run actions in background using threads. Can also be executed wi
 
 This object will run the `action()` method in a new thread. Once the `Action` is finished, it will give feedback through the `done()` method. If we want to get track of the response we will use the `Success` method. And if we want to get track of the possible errors with the `Action` we will use the `Error` method. Except the `Action` method, all are optional.
 
-Examples:
+__Examples__:
 
 ```java
 new AsyncObject<Void>()
@@ -29,21 +29,11 @@ new AsyncObject<Void>()
 ```java
 new AsyncObject<String>()
                 .action(() -> "AsyncObject")
-                .success(System.out::println)
-                .done(() -> System.out.println("request done"))
-                .error(e -> System.out.println("request error: " + e.toString()))
-                .run();
-```
-
-```java
-new AsyncObject<String>()
-                .action(() -> "AsyncObject")
                 .subscribe(
                         System.out::println,
                         e -> System.out.println("request error: " + e.toString()),
                         () -> System.out.println("request done")
-                )
-                .run();
+                );
 ```
 
 ## The example
@@ -59,16 +49,16 @@ The details for each requests are:
 5. It just uses the `Action` function, the `subscribe` method (`Action`, `Error`), has 7 seconds delay and returns an error.
 6. It just uses the `Action` function, the `subscribe` method (`Action`, `Success`, `Error`) and has 6 seconds delay.
 
-The result will be something like this (notice that the `-> END METHOD` line can be shown in another position because of the async nature of the threads):
+__Note__: The result will be something like this (notice that the `-> END PROGRAM` and the `request x started` lines maybe sorted different because of the threads):
 
 ```
--> START METHOD
+-> START PROGRAM
 request 1 started in [Thread-0] (2 seconds delay response)
 request 2 started in [Thread-1] (4 seconds delay response)
 request 3 started in [pool-1-thread-1] (3 seconds delay response)
-request 4 started in [pool-1-thread-2] (5 seconds delay response)
+request 4 started in [pool-1-thread-2] and won't have response feedback (5 seconds process)
 request 5 started in [Thread-2] (4 seconds delay response)
--> END METHOD
+-> END PROGRAM
 request 6 started in [Thread-3] (4 seconds delay response)
 java.lang.Exception: Fake error
 request 1 done
@@ -77,7 +67,6 @@ request 3 done
 request 2 response: {user_id="31", user_name="Marcus"} in [Thread-1]
 request 2 done
 Action successfully completed
-request 4 done
 request 6 response: {user_id="54", user_name="Frank"} in [Thread-3]
 request 6 done
 request 5 error in [Thread-2]

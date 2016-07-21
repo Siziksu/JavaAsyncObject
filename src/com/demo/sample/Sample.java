@@ -18,8 +18,7 @@ public class Sample {
                     Mock.getInstance().pause(2000);
                     return Mock.getInstance().fakeErrorCall1();
                 })
-                .done(() -> System.out.println("request 1 done"))
-                .run();
+                .subscribe(() -> System.out.println("request 1 done"));
 
         new AsyncObject<User>()
                 .action(() -> {
@@ -27,10 +26,11 @@ public class Sample {
                     Mock.getInstance().pause(4000);
                     return Mock.getInstance().fakeCall2();
                 })
-                .success(response -> System.out.println("request 2 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]"))
-                .error(e -> System.out.println("request 2 error in [" + Thread.currentThread().getName() + "]"))
-                .done(() -> System.out.println("request 2 done"))
-                .run();
+                .subscribe(
+                        response -> System.out.println("request 2 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]"),
+                        e -> System.out.println("request 2 error in [" + Thread.currentThread().getName() + "]"),
+                        () -> System.out.println("request 2 done")
+                );
 
         ExecutorService executorService = Executors.newFixedThreadPool(2);
 
@@ -40,21 +40,22 @@ public class Sample {
                     Mock.getInstance().pause(3000);
                     return Mock.getInstance().fakeCall3();
                 })
-                .success(response -> System.out.println("request 3 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]"))
-                .error(e -> System.out.println("request 3 error in [" + Thread.currentThread().getName() + "]"))
-                .done(() -> System.out.println("request 3 done"))
-                .run(executorService);
+                .executeInto(executorService)
+                .subscribe(
+                        response -> System.out.println("request 3 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]"),
+                        e -> System.out.println("request 3 error in [" + Thread.currentThread().getName() + "]"),
+                        () -> System.out.println("request 3 done"));
 
         new AsyncObject<Void>()
                 .action(() -> {
-                    System.out.println("request 4 started in [" + Thread.currentThread().getName() + "] (5 seconds delay response)");
+                    System.out.println("request 4 started in [" + Thread.currentThread().getName() + "] and won't have response feedback (5 seconds process)");
                     Mock.getInstance().pause(5000);
                     return null;
                 })
-                .done(() -> System.out.println("request 4 done"))
-                .run(executorService);
+                .executeInto(executorService)
+                .run();
 
-        AsyncObject.shutdown(executorService);
+        AsyncObject.shutdownExecutor(executorService);
 
         new AsyncObject<User>()
                 .action(() -> {
@@ -65,8 +66,7 @@ public class Sample {
                 .subscribe(
                         response -> System.out.println("request 5 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]"),
                         e -> System.out.println("request 5 error in [" + Thread.currentThread().getName() + "]")
-                )
-                .run();
+                );
 
         new AsyncObject<User>()
                 .action(() -> {
@@ -77,8 +77,7 @@ public class Sample {
                 .subscribe(
                         response -> System.out.println("request 6 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]"),
                         () -> System.out.println("request 6 done")
-                )
-                .run();
+                );
 
         System.out.println("-> END PROGRAM");
     }
