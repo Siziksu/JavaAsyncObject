@@ -38,7 +38,7 @@ new AsyncObject<String>()
 
 ## The example
 
-In this example, we will use 4 different `AsyncObjects`, each one with a different delay for the response simulating background tasks. All the calls are done inside the method `start()`.
+In this example, we will use 6 different `AsyncObjects`, each one with a different delay for the response simulating background tasks. All the calls are done inside the method `start()`.
 
 The details for each requests are:
 
