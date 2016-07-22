@@ -24,7 +24,6 @@ public final class AsyncObject<O> {
     private Executor executor;
     private boolean useExecutor;
 
-
     /**
      * Instantiates an {@code AsyncObject}
      */
@@ -46,7 +45,7 @@ public final class AsyncObject<O> {
      * be executed in a new {@link Thread} when the method {@link #run()}
      * is called.
      *
-     * @param action the Request that will be used
+     * @param action the Action function that will be used
      * @return {@code AsyncObject}
      */
     public AsyncObject<O> action(final Action<O> action) {
@@ -57,38 +56,13 @@ public final class AsyncObject<O> {
     /**
      * Sets the {@link Success} used to return the response of the
      * {@link Action} if ends successfully.
+     * <br />
+     * And finally executes the {@link Action}.
      *
-     * @param success the Success that will be used
+     * @param success the Success function that will be used
      */
     public void subscribe(final Success<O> success) {
         this.success = success;
-        run();
-    }
-
-    /**
-     * Sets the {@link Done} used to emit when the response of the
-     * {@link Action} if ends.
-     *
-     * @param done the Done that will be used
-     */
-    public void subscribe(final Done done) {
-        this.done = done;
-        run();
-    }
-
-    /**
-     * Sets the {@link Success} used to return the response of the
-     * {@link Action} if ends successfully.
-     * <br />
-     * Sets the {@link Done} used to emit when the response of the
-     * {@link Action} if ends.
-     *
-     * @param success the Success that will be used
-     * @param done    the Done that will be used
-     */
-    public void subscribe(final Success<O> success, final Done done) {
-        this.success = success;
-        this.done = done;
         run();
     }
 
@@ -98,9 +72,11 @@ public final class AsyncObject<O> {
      * <br />
      * Sets the {@link Error} used to return {@link Exception} that will be
      * thrown if the {@link Action} fails.
+     * <br />
+     * And finally executes the {@link Action}.
      *
-     * @param success the Success that will be used
-     * @param error   the Error that will be used
+     * @param success the Success function that will be used
+     * @param error   the Error function that will be used
      */
     public void subscribe(final Success<O> success, final Error error) {
         this.success = success;
@@ -109,24 +85,14 @@ public final class AsyncObject<O> {
     }
 
     /**
-     * Sets the {@link Success} used to return the response of the
-     * {@link Action} if ends successfully.
-     * <br />
-     * Sets the {@link Error} used to return {@link Exception} that will be
-     * thrown if the {@link Action} fails.
-     * <br />
      * Sets the {@link Done} used to emit when the response of the
      * {@link Action} if ends.
      *
-     * @param success the Success that will be used
-     * @param error   the Error that will be used
-     * @param done    the Done that will be used
+     * @param done the Done function that will be used
      */
-    public void subscribe(final Success<O> success, final Error error, final Done done) {
-        this.success = success;
-        this.error = error;
+    public AsyncObject<O> done(final Done done) {
         this.done = done;
-        run();
+        return this;
     }
 
     /**
@@ -138,7 +104,9 @@ public final class AsyncObject<O> {
             if (useExecutor) {
                 executor.execute(obtainRunnable());
             } else {
-                new Thread(obtainRunnable()).start();
+                Thread thread = new Thread(obtainRunnable());
+                thread.setName("async-object-thread-" + thread.getId());
+                thread.start();
             }
         } else {
             throw new RuntimeException("There is no action to be executed");

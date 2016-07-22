@@ -29,47 +29,50 @@ new AsyncObject<Void>()
 ```java
 new AsyncObject<String>()
                 .action(() -> "AsyncObject")
+                .done(() -> System.out.println("request done"))
                 .subscribe(
                         System.out::println,
-                        e -> System.out.println("request error: " + e.toString()),
-                        () -> System.out.println("request done")
+                        e -> System.out.println("request error: " + e.toString())
                 );
 ```
 
 ## The example
 
-In this example, we will use 6 different `AsyncObjects`, each one with a different delay for the response simulating background tasks. All the calls are done inside the method `start()`.
+In this example, we will use 7 different `AsyncObjects`, each one with a different delay for the response simulating background tasks. All the calls are done inside the method `start()`.
 
 The details for each requests are:
 
-1. It just uses the `Action` function, has 2 seconds delay and returns an error. 
-2. Uses the `Action`, `Success`, `Error`, `Done` functions and has 4 seconds delay.
-3. Uses the `Action`, `Success`, `Error`, `Done` functions, has 3 seconds delay and it's executed in a `ThreadPool`.
-4. It just uses the `Action` function, has 5 seconds delay and it's executed in the same `ThreadPool` as the third request.
-5. It just uses the `Action` function, the `subscribe` method (`Action`, `Error`), has 7 seconds delay and returns an error.
-6. It just uses the `Action` function, the `subscribe` method (`Action`, `Success`, `Error`) and has 6 seconds delay.
+1. It uses the `Action`, `Done` functions, has 2 seconds delay and returns an error. 
+2. It uses the `Action`, `Done` functions, the `subscribe` method (`Success`, `Error`) and has 4 seconds delay.
+3. It uses the `Action`, `Done` functions, the `subscribe` method (`Success`, `Error`), has 3 seconds delay (it's executed in a `ThreadPool`).
+4. It uses the `Action` function, has 5 seconds delay (it's executed in a `ThreadPool`).
+5. It uses the `Action` function, the `subscribe` method (`Success`, `Error`), has 7 seconds delay and returns an error (it's executed in a `ThreadPool`).
+6. It uses the `Action`, `Done` functions, the `subscribe` method (`Success`) and has 6 seconds delay.
+7. It uses the `Action`, `Done` functions, the `subscribe` method (`Success`) and has 6 seconds delay.
 
 __Note__: The result will be something like this (notice that the `-> END PROGRAM` and the `request x started` lines maybe sorted different because of the threads):
 
 ```
 -> START PROGRAM
-request 1 started in [Thread-0] (2 seconds delay response)
-request 2 started in [Thread-1] (4 seconds delay response)
+request 1 started in [async-object-thread-11] (2 seconds delay response)
+request 2 started in [async-object-thread-12] (4 seconds delay response)
 request 3 started in [pool-1-thread-1] (3 seconds delay response)
 request 4 started in [pool-1-thread-2] and won't have response feedback (5 seconds process)
-request 5 started in [Thread-2] (4 seconds delay response)
+request 5 started in [pool-1-thread-3] (4 seconds delay response)
 -> END PROGRAM
-request 6 started in [Thread-3] (4 seconds delay response)
+request 6 started in [async-object-thread-16] (4 seconds delay response)
 java.lang.Exception: Fake error
 request 1 done
 request 3 response: {user_id="15", user_name="Thelma"} in [pool-1-thread-1]
 request 3 done
-request 2 response: {user_id="31", user_name="Marcus"} in [Thread-1]
+request 2 response: {user_id="31", user_name="Marcus"} in [async-object-thread-12]
 request 2 done
 Action successfully completed
-request 6 response: {user_id="54", user_name="Frank"} in [Thread-3]
 request 6 done
-request 5 error in [Thread-2]
+request 7 started in [async-object-thread-18]
+request 7 response (Frank == Michael): false
+request 7 done
+request 5 error in [pool-1-thread-3]
 ```
 
 ## License
