@@ -47,8 +47,8 @@ The details for each requests are:
 3. It uses the `Action`, `Done` functions, the `subscribe` method (`Success`, `Error`), has 3 seconds delay (it's executed in a `ThreadPool`).
 4. It uses the `Action` function, has 5 seconds delay (it's executed in a `ThreadPool`).
 5. It uses the `Action` function, the `subscribe` method (`Success`, `Error`), has 7 seconds delay and returns an error (it's executed in a `ThreadPool`).
-6. It uses the `Action`, `Done` functions, the `subscribe` method (`Success`) and has 6 seconds delay.
-7. It uses the `Action`, `Done` functions, the `subscribe` method (`Success`) and has 6 seconds delay.
+6. It uses the `Action`, `Done` functions, the `subscribe` method (`Success`), has 6 seconds delay and executes `Action` 7 when gets the response.
+7. It uses the `Action`, `Done` functions, the `subscribe` method (`Success`).
 
 __Note__: The result will be something like this (notice that the `-> END PROGRAM` and the `request x started` lines maybe sorted different because of the threads):
 
