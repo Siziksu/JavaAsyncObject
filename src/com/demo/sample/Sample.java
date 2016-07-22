@@ -4,13 +4,21 @@ import com.demo.common.AsyncObject;
 import com.demo.common.model.User;
 import com.demo.sample.mock.Mock;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Sample class.
+ */
 public class Sample {
 
     private ExecutorService executorService;
 
+    /**
+     * Starts the sample demo.
+     */
     public void start() {
         System.out.println("-> START PROGRAM");
         request1();
@@ -44,7 +52,7 @@ public class Sample {
                 })
                 .done(() -> System.out.println("request 2 done"))
                 .subscribe(
-                        response -> System.out.println("request 2 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]"),
+                        response -> System.out.println("request 2 response: {user_id=\"" + response.getId() + "\"" + ", user_name=\"" + response.getName() + "\"} in [" + Thread.currentThread().getName() + "]"),
                         e -> System.out.println("request 2 error in [" + Thread.currentThread().getName() + "]")
                 );
     }
@@ -59,7 +67,7 @@ public class Sample {
                 })
                 .done(() -> System.out.println("request 3 done"))
                 .subscribe(
-                        response -> System.out.println("request 3 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]"),
+                        response -> System.out.println("request 3 response: {user_id=\"" + response.getId() + "\"" + ", user_name=\"" + response.getName() + "\"} in [" + Thread.currentThread().getName() + "]"),
                         e -> System.out.println("request 3 error in [" + Thread.currentThread().getName() + "]"));
     }
 
@@ -83,13 +91,13 @@ public class Sample {
                     return Mock.getInstance().fakeErrorCall4();
                 })
                 .subscribe(
-                        response -> System.out.println("request 5 response: {user_id=\"" + response.id + "\"" + ", user_name=\"" + response.name + "\"} in [" + Thread.currentThread().getName() + "]"),
+                        response -> System.out.println("request 5 response: {user_id=\"" + response.getId() + "\"" + ", user_name=\"" + response.getName() + "\"} in [" + Thread.currentThread().getName() + "]"),
                         e -> System.out.println("request 5 error in [" + Thread.currentThread().getName() + "]")
                 );
     }
 
     private void request6() {
-        new AsyncObject<User>()
+        new AsyncObject<List<User>>()
                 .action(() -> {
                     System.out.println("request 6 started in [" + Thread.currentThread().getName() + "] (4 seconds delay response)");
                     Mock.getInstance().pause(6000);
@@ -99,13 +107,17 @@ public class Sample {
                 .subscribe(this::afterRequest6);
     }
 
-    private void afterRequest6(User user) {
-        new AsyncObject<Boolean>()
-                .action(() -> {
-                    System.out.println("request 7 started in [" + Thread.currentThread().getName() + "]");
-                    return user.name.equals("Michael");
-                })
-                .done(() -> System.out.println("request 7 done"))
-                .subscribe(response -> System.out.println("request 7 response (" + user.name + " == Michael) " + response));
+    private void afterRequest6(List<User> list) {
+        Optional<User> filter = list.stream().filter(u -> u.getName().equals("Carla")).findFirst();
+        if (filter.isPresent()) {
+            User user = filter.get();
+            new AsyncObject<Boolean>()
+                    .action(() -> {
+                        System.out.println("request 7 started in [" + Thread.currentThread().getName() + "]");
+                        return user.getName().equals("Michael");
+                    })
+                    .done(() -> System.out.println("request 7 done"))
+                    .subscribe(response -> System.out.println("request 7 response (" + user.getName() + " == Michael) " + response));
+        }
     }
 }

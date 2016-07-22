@@ -6,8 +6,8 @@ Developed using the [JetBrains IntelliJ IDEA] (https://www.jetbrains.com/idea/) 
 
 ## How it works this object
 
-This object can run actions in background using threads. Can also be executed with an Executor (ThreadPoolExecutor, ExecutorService). It uses 4 tasks (Functional Interfaces):
-  
+This object can run actions in background using threads. Can also be executed with an Executor (ThreadPoolExecutor, ExecutorService). It uses 4 functions (Functional Interfaces):
+
 1. Action (required)
 2. Success (optional)
 3. Error (optional)

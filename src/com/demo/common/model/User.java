@@ -1,12 +1,29 @@
 package com.demo.common.model;
 
+/**
+ * User class.
+ */
 public class User {
 
-  public long id;
-  public String name;
+    private long id;
+    private String name;
 
-  public User(int id, String name) {
-    this.id = id;
-    this.name = name;
-  }
+    /**
+     * Constructor.
+     *
+     * @param id   the id
+     * @param name the name
+     */
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
