@@ -2,18 +2,16 @@
 
 AsyncObject for Java with an usage demonstration.
 
-Developed using the [JetBrains IntelliJ IDEA] (https://www.jetbrains.com/idea/) IDE.
-
 ## How it works this object
 
 This object can run actions in background using threads. Can also be executed with an Executor (ThreadPoolExecutor, ExecutorService). It uses 4 functions (Functional Interfaces):
 
 1. Action (required)
 2. Success (optional)
-3. Error (optional)
+3. Fail (optional)
 4. Done (optional)
 
-This object will run the `action()` method in a new thread. Once the `Action` is finished, it will give feedback through the `done()` method. If we want to get track of the response we will use the `Success` method. And if we want to get track of the possible errors with the `Action` we will use the `Error` method. Except the `Action` method, all are optional.
+This object will run the `action()` function in a new thread. Once finished, it will give feedback through the `done()` function. If we want to get track of the response and the possible errors we will use the `subscribe()` method. Except the `Action` method, all are optional.
 
 __Examples__:
 
