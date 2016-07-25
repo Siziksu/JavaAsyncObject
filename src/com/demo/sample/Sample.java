@@ -53,7 +53,7 @@ public class Sample {
                 .done(() -> System.out.println("request 2 done"))
                 .subscribe(
                         response -> System.out.println("request 2 response: {user_id=\"" + response.getId() + "\"" + ", user_name=\"" + response.getName() + "\"} in [" + Thread.currentThread().getName() + "]"),
-                        e -> System.out.println("request 2 error in [" + Thread.currentThread().getName() + "]")
+                        throwable -> System.out.println("request 2 fail in [" + Thread.currentThread().getName() + "]")
                 );
     }
 
@@ -68,7 +68,7 @@ public class Sample {
                 .done(() -> System.out.println("request 3 done"))
                 .subscribe(
                         response -> System.out.println("request 3 response: {user_id=\"" + response.getId() + "\"" + ", user_name=\"" + response.getName() + "\"} in [" + Thread.currentThread().getName() + "]"),
-                        e -> System.out.println("request 3 error in [" + Thread.currentThread().getName() + "]"));
+                        throwable -> System.out.println("request 3 fail in [" + Thread.currentThread().getName() + "]"));
     }
 
     private void request4() {
@@ -92,7 +92,7 @@ public class Sample {
                 })
                 .subscribe(
                         response -> System.out.println("request 5 response: {user_id=\"" + response.getId() + "\"" + ", user_name=\"" + response.getName() + "\"} in [" + Thread.currentThread().getName() + "]"),
-                        e -> System.out.println("request 5 error in [" + Thread.currentThread().getName() + "]")
+                        throwable -> System.out.println("request 5 fail in [" + Thread.currentThread().getName() + "]")
                 );
     }
 

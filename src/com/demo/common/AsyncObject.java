@@ -2,7 +2,7 @@ package com.demo.common;
 
 import com.demo.common.functions.Action;
 import com.demo.common.functions.Done;
-import com.demo.common.functions.Error;
+import com.demo.common.functions.Fail;
 import com.demo.common.functions.Success;
 
 import java.util.concurrent.Executor;
@@ -19,7 +19,7 @@ public final class AsyncObject<O> {
     private boolean executing;
     private Action<O> action;
     private Success<O> success;
-    private Error error;
+    private Fail fail;
     private Done done;
     private Executor executor;
     private boolean useExecutor;
@@ -41,7 +41,7 @@ public final class AsyncObject<O> {
     }
 
     /**
-     * Sets the {@link Action} used to create the {@link Runnable} that will
+     * Sets the request used to create the {@link Runnable} that will
      * be executed in a new {@link Thread} when the method {@link #run()}
      * is called.
      *
@@ -55,9 +55,9 @@ public final class AsyncObject<O> {
 
     /**
      * Sets the {@link Success} used to return the response of the
-     * {@link Action} if ends successfully.
+     * request if ends successfully.
      * <br />
-     * And finally executes the {@link Action}.
+     * And finally executes the request.
      *
      * @param success the Success function that will be used
      */
@@ -68,25 +68,25 @@ public final class AsyncObject<O> {
 
     /**
      * Sets the {@link Success} used to return the response of the
-     * {@link Action} if ends successfully.
+     * request if ends successfully.
      * <br />
-     * Sets the {@link Error} used to return {@link Exception} that will be
-     * thrown if the {@link Action} fails.
+     * Sets the {@link Fail} used to return {@link Throwable} that will be
+     * thrown if the request fails.
      * <br />
-     * And finally executes the {@link Action}.
+     * And finally executes the request.
      *
      * @param success the Success function that will be used
-     * @param error   the Error function that will be used
+     * @param fail   the Fail function that will be used
      */
-    public void subscribe(final Success<O> success, final Error error) {
+    public void subscribe(final Success<O> success, final Fail fail) {
         this.success = success;
-        this.error = error;
+        this.fail = fail;
         run();
     }
 
     /**
      * Sets the {@link Done} used to emit when the response of the
-     * {@link Action} if ends.
+     * request if ends.
      *
      * @param done the Done function that will be used
      */
@@ -96,7 +96,7 @@ public final class AsyncObject<O> {
     }
 
     /**
-     * Executes the {@link Action} into a new {@link Thread} and gives feedback
+     * Executes the request into a new {@link Thread} and gives feedback
      * if any subscription is implemented.
      */
     public void run() {
@@ -114,7 +114,7 @@ public final class AsyncObject<O> {
     }
 
     /**
-     * Executes the {@link Action} into a {@link Executor}.
+     * Executes the request into a {@link Executor}.
      */
     public AsyncObject<O> executeInto(Executor executor) {
         this.executor = executor;
@@ -132,7 +132,7 @@ public final class AsyncObject<O> {
     }
 
     /**
-     * Creates a {@link Runnable} using an {@link Action}.
+     * Creates a {@link Runnable} using an request.
      */
     private Runnable obtainRunnable() {
         if (runnable == null) {
@@ -143,11 +143,11 @@ public final class AsyncObject<O> {
                     if (response != null && success != null) {
                         success(response);
                     }
-                } catch (Exception e) {
-                    if (error != null) {
-                        error(e);
+                } catch (Throwable throwable) {
+                    if (fail != null) {
+                        fail(throwable);
                     } else {
-                        System.out.println(e.toString());
+                        System.out.println(throwable.toString());
                     }
                 }
                 executing = false;
@@ -163,8 +163,8 @@ public final class AsyncObject<O> {
         success.success(response);
     }
 
-    private void error(final Exception e) {
-        error.error(e);
+    private void fail(final Throwable throwable) {
+        fail.fail(throwable);
     }
 
     private void done() {

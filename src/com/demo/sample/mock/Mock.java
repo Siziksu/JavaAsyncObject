@@ -38,7 +38,7 @@ public class Mock {
     }
 
     /**
-     * Fake error call 1.
+     * Fake fail call 1.
      *
      * @return User
      */
@@ -57,7 +57,7 @@ public class Mock {
     }
 
     /**
-     * Fake error call 2.
+     * Fake fail call 2.
      *
      * @return User
      */
@@ -76,7 +76,7 @@ public class Mock {
     }
 
     /**
-     * Fake error call 3.
+     * Fake fail call 3.
      *
      * @return User
      */
@@ -95,7 +95,7 @@ public class Mock {
     }
 
     /**
-     * Fake error call 4.
+     * Fake fail call 4.
      *
      * @return User
      */
@@ -118,7 +118,7 @@ public class Mock {
     }
 
     /**
-     * Fake error call 5.
+     * Fake fail call 5.
      *
      * @return List<User>
      */
@@ -141,11 +141,11 @@ public class Mock {
     }
 
     /**
-     * Fake error.
+     * Fake fail.
      *
      * @throws Exception
      */
     private void fakeError() throws Exception {
-        throw new Exception("Fake error");
+        throw new Exception("Fake fail");
     }
 }
