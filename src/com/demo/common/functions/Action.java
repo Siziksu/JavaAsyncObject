@@ -1,11 +1,11 @@
 package com.demo.common.functions;
 
 /**
- * A task that returns a result and may throw an exception.
- * <br>It is designed ot be executed by another thread.
- * <br>It returns the result of the async request through: {@code action(O)}.
+ * Function that returns a result and may throw an exception.
+ * <br />It is designed ot be executed by another thread.
+ * <br />It returns the result of the async request through: {@code action(O)}.
  *
- * @param <O> the result type of method {@code request}
+ * @param <O> the type of the result of the function
  */
 public interface Action<O> {
 
